@@ -15,3 +15,10 @@ logic and formulas.
 
 Most of the days, I actually try to use onlyoffice instead. But due to
 performance, sometimes I have to fall back to original Excel.
+
+2020
+----
+
+Even this year is going to be Excel.
+
+Even though most days would be compatible with OnlyOffice, Microsoft Excel is used. Biggest difference is currently performance
