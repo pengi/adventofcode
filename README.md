@@ -17,7 +17,7 @@ I'm a software developer, mainly focusing on embedded C, python and other langua
 Solved
 ------
 
-Note: This is the ones I solved according to AoC webpage. Might be some I just solved for fun in other languages, and thus solutions are missing in this repo.
+Note: Days marked with "." is missing solutions, and possible not via Excel, and is therefore not available in this repo. Only marked as solved for me at the AoC page.
 
 |    | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 |
 | -- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -25,15 +25,15 @@ Note: This is the ones I solved according to AoC webpage. Might be some I just s
 |  2 | **   |      |      |      | **   | **   |      | **   |
 |  3 | **   |      |      |      | **   | **   |      | **   |
 |  4 |      |      |      |      | **   | **   |      | **   |
-|  5 | *    |      |      |      | **   | **   |      |      |
+|  5 | *    |      |      |      | **   | **   |      | **   |
 |  6 |      |      |      |      | **   | **   |      |      |
 |  7 |      |      |      |      | **   | **   |      |      |
 |  8 |      |      |      |      | **   | **   |      |      |
 |  9 |      |      |      |      | **   | **   |      |      |
-| 10 |      |      |      | **   | **   | **   |      |      |
+| 10 |      |      |      | ..   | **   | **   |      |      |
 | 11 |      |      |      |      | **   | *    |      |      |
 | 12 |      |      |      |      | **   | **   |      |      |
-| 13 |      |      |      | *    | **   | **   |      |      |
+| 13 |      |      |      | .    | **   | **   |      |      |
 | 14 |      |      |      |      | **   | *    |      |      |
 | 15 |      |      |      |      | **   |      |      |      |
 | 16 |      |      |      |      | **   |      |      |      |
@@ -46,3 +46,4 @@ Note: This is the ones I solved according to AoC webpage. Might be some I just s
 | 23 |      |      |      |      | **   |      |      |      |
 | 24 |      |      |      |      | **   |      |      |      |
 | 25 |      |      |      |      | **   |      |      |      |
+
