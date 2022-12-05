@@ -5,20 +5,44 @@ For information about advent of code, visit:
 
 https://adventofcode.com/
 
-This is my solutions...
-
-2019
-----
-
-This year, I try to solve all problems in Excel without any macros. Just pure
-logic and formulas.
-
-Most of the days, I actually try to use onlyoffice instead. But due to
-performance, sometimes I have to fall back to original Excel.
-
-2020
-----
-
-Even this year is going to be Excel.
+This is my solutions, mainly in Excel
 
 Even though most days would be compatible with OnlyOffice, Microsoft Excel is used. Biggest difference is currently performance
+
+Notes
+-----
+
+I'm a software developer, mainly focusing on embedded C, python and other languages. I do this in excel because of the challenge, and to force myself to think outside the box, for the optimization required to fit into a spreadsheet.
+
+Solved
+------
+
+Note: This is the ones I solved according to AoC webpage. Might be some I just solved for fun in other languages, and thus solutions are missing in this repo.
+
+|    | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 |
+| -- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+|  1 | **   |      |      | **   | **   | **   | **   | **   |
+|  2 | **   |      |      |      | **   | **   |      | **   |
+|  3 | **   |      |      |      | **   | **   |      | **   |
+|  4 |      |      |      |      | **   | **   |      | **   |
+|  5 | *    |      |      |      | **   | **   |      |      |
+|  6 |      |      |      |      | **   | **   |      |      |
+|  7 |      |      |      |      | **   | **   |      |      |
+|  8 |      |      |      |      | **   | **   |      |      |
+|  9 |      |      |      |      | **   | **   |      |      |
+| 10 |      |      |      | **   | **   | **   |      |      |
+| 11 |      |      |      |      | **   | *    |      |      |
+| 12 |      |      |      |      | **   | **   |      |      |
+| 13 |      |      |      | *    | **   | **   |      |      |
+| 14 |      |      |      |      | **   | *    |      |      |
+| 15 |      |      |      |      | **   |      |      |      |
+| 16 |      |      |      |      | **   |      |      |      |
+| 17 |      |      |      |      | **   |      |      |      |
+| 18 |      |      |      |      | **   |      |      |      |
+| 19 |      |      |      |      | **   |      |      |      |
+| 20 |      |      |      |      | **   |      |      |      |
+| 21 |      |      |      |      | **   |      |      |      |
+| 22 |      |      |      |      | **   |      |      |      |
+| 23 |      |      |      |      | **   |      |      |      |
+| 24 |      |      |      |      | **   |      |      |      |
+| 25 |      |      |      |      | **   |      |      |      |
