@@ -35,7 +35,10 @@ class SeedRange:
             return f"{self.start}"
         else:
             return f"{self.start}-{self.end-1}"
-    
+
+    def __lt__(self, other):
+        return self.start < other.start
+
     def merge(self, range):
         """
         Merge two ranges
@@ -100,6 +103,7 @@ class SeedRangeSet:
         # result
         result.ranges.append(range)
 
+        result.ranges.sort()
         return result
     
     def __add__(self, seeds):
@@ -120,6 +124,7 @@ class SeedRangeSet:
                 result = result.add_range(range)
         else:
             raise TypeError(f"Invalid type {type(seeds)}")
+
         return result
 
     def __sub__(self, seeds):
@@ -141,17 +146,19 @@ class SeedRangeSet:
                 new_set.ranges += remains
             result = new_set
         
+        result.ranges.sort()
         return result
 
     def __str__(self) -> str:
         return ", ".join(str(range) for range in self.ranges)
 
     def min(self) -> int:
-        min_location = None
-        for range in self.ranges:
-            if min_location is None or min_location > range.start:
-                min_location = range.start
-        return min_location
+        # Since the sets are always sorted, min location is simply start of
+        # first element
+        if len(self.ranges) > 0:
+            return self.ranges[0].start
+        else:
+            return None
 
 class MapRange:
     """
