@@ -37,11 +37,6 @@ class Input:
     def __str__(self):
         return repr(self.races)
 
-# Part 2 uses other input parsing...
-class InputPart2(Input):
-    def _parse_values(self, values):
-        return [int(values.replace(" ", ""))]
-
 class Problem:
     def __init__(self, races):
         self.races = races
@@ -111,11 +106,3 @@ if __name__ == "__main__":
     part1_result = part1.run()
 
     print(f"\nPart1: {part1_result}\n")
-
-        
-    print("\nPart2:\n")
-
-    part2 = Problem(InputPart2(sys.argv[1]).races)
-    part2_result = part2.run()
-
-    print(f"\nPart2: {part2_result}\n")
