@@ -19,7 +19,7 @@ class SeedRange:
         self.start = start
         self.end = end
     
-    def len(self):
+    def size(self):
         return self.end - self.start
 
     def is_valid(self):
@@ -31,7 +31,7 @@ class SeedRange:
         return self.start <= self.end
 
     def __str__(self):
-        if self.len() == 1:
+        if self.size() == 1:
             return f"{self.start}"
         else:
             return f"{self.start}-{self.end-1}"
@@ -152,6 +152,12 @@ class SeedRangeSet:
     def __str__(self) -> str:
         return ", ".join(str(range) for range in self.ranges)
 
+    def short_str(self) -> str:
+        return f"{self.size():11} seeds, {len(self.ranges):3} ranges"
+
+    def size(self) -> int:
+        return sum(range.size() for range in self.ranges)
+
     def min(self) -> int:
         # Since the sets are always sorted, min location is simply start of
         # first element
@@ -266,10 +272,10 @@ class Almenac:
                 break
             
             # Do single translation
-            print(f"  - {cur_name}: {seeds}")
+            print(f"  - {cur_name:12}: {seeds.short_str()}")
             cur_name, map = self.maps[cur_name]
             seeds = map.translate(seeds)
-        print(f"  - {cur_name}: {seeds}")
+        print(f"  - {cur_name:12}: {seeds.short_str()}")
         return seeds
 
 class Input:
