@@ -19,9 +19,6 @@ class Input:
 
             self.lines = [l.strip() for l in f.readlines()]
 
-    def __str__(self):
-        return repr(self.races)
-
 class Part1:
     letters = {
         "0": 0,

@@ -74,9 +74,6 @@ class Input:
             ])
             self.games.append(game)
 
-    def __str__(self):
-        return repr(self.races)
-
 class Part1:
     def __init__(self, games):
         self.games = games
