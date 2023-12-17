@@ -102,32 +102,51 @@ class SeedRangeSet:
 
         return result
     
-    def remove_range(self, range: SeedRange):
-        result = SeedRangeSet()
+    def __add__(self, seeds):
+        """
+        Merge two SeedRangeSet or SeedRangeSet with a SeedRange
 
-        # Simply remove range from all available ranges
-        for cur in self.ranges:
-            remains = cur.remove(range)
-            result.ranges += remains
+        Can be used both as:
+        a = b + c
 
-        return result
-
-    def add_set(self, seeds):
+        or:
+        a += c
+        """
         result = self
-        for range in seeds.ranges:
-            result = result.add_range(range)
+        if type(seeds) == SeedRange:
+            result = result.add_range(seeds)
+        elif type(seeds) == SeedRangeSet:
+            for range in seeds.ranges:
+                result = result.add_range(range)
+        else:
+            raise TypeError(f"Invalid type {type(seeds)}")
         return result
 
-    def remove_set(self, seeds):
+    def __sub__(self, seeds):
+        """
+        Remove one SeedRangeSet from the other
+
+        Can be used both as:
+        a = b - c
+
+        or:
+        a -= c
+        """
         result = self
+
         for range in seeds.ranges:
-            result = result.remove_range(range)
+            new_set = SeedRangeSet()
+            for cur in result.ranges:
+                remains = cur.remove(range)
+                new_set.ranges += remains
+            result = new_set
+        
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ", ".join(str(range) for range in self.ranges)
 
-    def min(self):
+    def min(self) -> int:
         min_location = None
         for range in self.ranges:
             if min_location is None or min_location > range.start:
@@ -144,10 +163,10 @@ class MapRange:
         self.src = src
         self.length = length
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.src} - {self.src+self.length-1} => {self.dst} - {self.dst+self.length-1}"
 
-    def _overlap(self, seeds: SeedRange):
+    def _overlap(self, seeds: SeedRange) -> SeedRange:
         """
         Return SeedRange that overlap with input range
         
@@ -161,7 +180,7 @@ class MapRange:
             return None
         return range
 
-    def translate(self, seeds: SeedRangeSet):
+    def translate(self, seeds: SeedRangeSet) -> (SeedRangeSet, SeedRangeSet):
         """
         Translate a number given the current range
 
@@ -175,11 +194,11 @@ class MapRange:
             if overlap is None:
                 continue
             
-            dst_seeds = dst_seeds.add_range(SeedRange(
+            dst_seeds += SeedRange(
                     overlap.start + self.dst - self.src,
                     overlap.end + self.dst - self.src
-                ))
-            src_seeds = src_seeds.add_range(overlap)
+                )
+            src_seeds += overlap
         return (dst_seeds, src_seeds)
 
 class Map:
@@ -190,13 +209,13 @@ class Map:
     def __init__(self):
         self.ranges = []
 
-    def add_range(self, range: MapRange):
+    def add_range(self, range: MapRange) -> None:
         self.ranges.append(range)
     
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join([f"{r}\n" for r in self.ranges])
     
-    def translate(self, seeds: SeedRangeSet):
+    def translate(self, seeds: SeedRangeSet) -> SeedRangeSet:
         """
         Translate a number given current map
         """
@@ -205,13 +224,13 @@ class Map:
             (dst_seeds, src_seeds) = maprange.translate(seeds)
 
             # Remove source seeds from original set
-            seeds = seeds.remove_set(src_seeds)
+            seeds -= src_seeds
 
             # Add new seeds to new set
-            result_seeds = result_seeds.add_set(dst_seeds)
+            result_seeds += dst_seeds
 
         # Add remaining non-translated seeds
-        result_seeds = result_seeds.add_set(seeds)
+        result_seeds += seeds
         return result_seeds
 
 
@@ -222,13 +241,13 @@ class Almenac:
     def __init__(self):
         self.maps = {}
 
-    def add_map(self, src_name: str, dst_name: str, map: Map):
+    def add_map(self, src_name: str, dst_name: str, map: Map) -> None:
         self.maps[src_name] = (dst_name, map)
     
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join(f"{src} => {dst}:\n{map}\n" for src,(dst,map) in self.maps.items())
     
-    def translate(self, src_name: str, dst_name: str, seeds: SeedRangeSet):
+    def translate(self, src_name: str, dst_name: str, seeds: SeedRangeSet) -> SeedRangeSet:
         """
         Translate a number from a source to a destination
         
@@ -273,11 +292,14 @@ class Input:
                 # seed line, as part1
                 self.seeds1 = SeedRangeSet()
                 for v in seednums:
-                    self.seeds1 = self.seeds1.add_range(SeedRange(v))
+                    self.seeds1 += SeedRange(v)
                 
                 self.seeds2 = SeedRangeSet()
                 for i in range(0, len(seednums), 2):
-                    self.seeds2 = self.seeds2.add_range(SeedRange(seednums[i],seednums[i] + seednums[i+1]))
+                    self.seeds2 += SeedRange(
+                        seednums[i],
+                        seednums[i] + seednums[i+1]
+                    )
 
             elif match_map:
                 # new map
