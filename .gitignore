@@ -1,3 +1,2 @@
-input.txt
-example.txt
+*.txt
 __pycache__
