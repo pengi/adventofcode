@@ -3,6 +3,20 @@
 import sys
 import re
 
+def hash(s):
+    """
+    Hash function
+
+    >>> hash('HASH')
+    52
+    """
+    val = 0
+    for c in s.strip():
+        val += ord(c)
+        val *= 17
+        val %= 256
+    return val
+
 class Input:
     def __init__(self, f):
         """
@@ -13,20 +27,15 @@ class Input:
         if type(f) == str:
             f = open(f,"r")
         
+        self.steps = f.read().strip().split(',')
+        
 
 class Part1:
     def __init__(self, input):
-        pass
+        self.steps = input.steps
 
     def run(self):
-        return None
-
-class Part2:
-    def __init__(self, input):
-        pass
-
-    def run(self):
-        return None
+        return sum(hash(step) for step in self.steps)
 
 if __name__ == "__main__":
     import doctest
@@ -40,6 +49,3 @@ if __name__ == "__main__":
     
     part1 = Part1(input)
     print(f"Part1: {part1.run()}")
-
-    part2 = Part2(input)
-    print(f"Part2: {part2.run()}")
