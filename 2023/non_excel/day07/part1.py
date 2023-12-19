@@ -128,6 +128,3 @@ if __name__ == "__main__":
     
     part1 = Part1(input.hands)
     print(f"Part1: {part1.run()}")
-
-    part2 = Part2(input.hands)
-    print(f"Part2: {part2.run()}")
