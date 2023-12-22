@@ -60,20 +60,15 @@ class Field:
         return True
     
     def print(self):
+        tiles = {
+            (True, False): '#',
+            (False, True): 'o',
+            (False, False): '.',
+        }
         for vrow, crow in zip(self.visited, self.cells):
             line = ""
-            last_v = False
             for v, c in zip(vrow, crow):
-                c_str = '#' if c else '.'
-                if v != last_v:
-                    if v:
-                        line += _bg_set
-                    else:
-                        line += _bg_clr
-                    last_v = v
-                line += c_str
-            if last_v:
-                line += _bg_clr
+                line += tiles[(c,v)]
             print(line)
         
     def count_visited(self, fn = None):
@@ -118,6 +113,8 @@ class Part1:
                 if self.field.visit(ant.x, ant.y):
                     queue.extend(a for a in ant.walk() if self.field.can_visit(a.x, a.y))
 
+        #self.field.print()
+
         parity = (start_x + start_y + self.max_dist) % 2
         return self.field.count_visited()
         #return self.field.count_visited(lambda x, y: (x+y)%2 == parity)
@@ -137,17 +134,21 @@ class Part2:
             if ant.dist <= steps:
                 if self.field.visit(ant.x, ant.y):
                     queue.extend(a for a in ant.walk() if self.field.can_visit(a.x, a.y))
-        return sum((
+
+        #print("---")
+        #self.field.print()
+
+        return (
             self.field.count_visited(lambda x, y: (x+y)%2 == 0),
             self.field.count_visited(lambda x, y: (x+y)%2 == 1)
-        ))
+        )
 
     def run(self):
         self.field.reset()
         
         # Input data:
-        # steps = 26501365
-        steps = 15
+        steps = 26501365
+        #steps = 20
 
 
         # There are some important properties for this to easily working
@@ -302,59 +303,84 @@ class Part2:
             
             'l': self._coverage(dim-1, mid  , ovf-dim),
             'L': self._coverage(dim-1, mid  , ovf),
-            '0': self._coverage(dim-1, 0    , ovf-1-mid),
-            '1': self._coverage(dim-1, 0    , ovf-1-mid+dim),
-            
             't': self._coverage(mid  , dim-1, ovf-dim),
             'T': self._coverage(mid  , dim-1, ovf),
-            '2': self._coverage(0    , dim-1, ovf-1-mid),
-            '3': self._coverage(0    , dim-1, ovf-1-mid+dim),
-            
             'r': self._coverage(0    , mid  , ovf-dim),
             'R': self._coverage(0    , mid  , ovf),
-            '4': self._coverage(0    , 0    , ovf-1-mid),
-            '5': self._coverage(0    , 0    , ovf-1-mid+dim),
-            
             'b': self._coverage(mid  , 0    , ovf-dim),
             'B': self._coverage(mid  , 0    , ovf),
-            '6': self._coverage(0    , 0    , ovf-1-mid),
-            '7': self._coverage(0    , 0    , ovf-1-mid+dim),
+
+            '0': self._coverage(dim-1, dim-1, ovf-1-mid),
+            '1': self._coverage(dim-1, dim-1, ovf-1-mid+dim),
+            '2': self._coverage(0    , dim-1, ovf-1-mid),
+            '3': self._coverage(0    , dim-1, ovf-1-mid+dim),
+            '4': self._coverage(0    , 0    , ovf-1-mid),
+            '5': self._coverage(0    , 0    , ovf-1-mid+dim),
+            '6': self._coverage(dim-1, 0    , ovf-1-mid),
+            '7': self._coverage(dim-1, 0    , ovf-1-mid+dim),
         }
 
+        even_n = tiles//2+1
+        odd_n = (tiles+1)//2
+        even_i = 1 + even_n*((even_n-1)*8)//2
+        odd_i = odd_n*(4*2 + (odd_n-1)*8)//2
+        
+        if tiles % 2 == 0:
+            even = lambda n: (n, 0)
+            odd  = lambda n: (0, n)
+        else:
+            even = lambda n: (0, n)
+            odd  = lambda n: (n, 0)
 
         tile_count = {
-            'i': tiles*(tiles+1)*2 + 1,
+            'i': (even_i, odd_i),
             
-            'l': 1,
-            'L': 1,
-            '0': tiles+1,
-            '1': tiles,
+            'l': even(1),
+            'L': odd(1),
+            't': even(1),
+            'T': odd(1),
+            'r': even(1),
+            'R': odd(1),
+            'b': even(1),
+            'B': odd(1),
+
+            '0': even(tiles+1),
+            '1': odd(tiles),
+            '2': even(tiles+1),
+            '3': odd(tiles),
+            '4': even(tiles+1),
+            '5': odd(tiles),
+            '6': even(tiles+1),
+            '7': odd(tiles),
             
-            't': 1,
-            'T': 1,
-            '2': tiles+1,
-            '3': tiles,
-            
-            'r': 1,
-            'R': 1,
-            '4': tiles+1,
-            '5': tiles,
-            
-            'b': 1,
-            'B': 1,
-            '6': tiles+1,
-            '7': tiles,
         }
+
+        # Are step count even or odd?
+        flip = steps % 2 == 1
 
         count = 0
         for ttype in tile_count.keys():
             #print(f"{ttype} - {tile_count[ttype]} - {coverage[ttype]}")
-            count += tile_count[ttype] * coverage[ttype]
+            tile_e, tile_o = tile_count[ttype]
+            cov_e, cov_o = coverage[ttype]
+            if flip:
+                tile_e, tile_o = tile_o, tile_e
+            count += tile_e * cov_e + tile_o * cov_o
+            #count += (tile_e + tile_o) * (cov_e + cov_o)
 
         # Test data:
+        #
+        # empty:
+        #
         #  12 steps on empty field, all cells:   313, even cells:   ???
+        #  14 steps on empty field, all cells:   ???, even cells:   225
         #  15 steps on empty field, all cells:   481, even cells:   256
         # 150 steps on empty field, all cells: 45301, even cells: 22801
+        #
+        # tile3:
+        #
+        #  20 steps                 all cells:   719, even cells:   375
+
 
         return count
 
