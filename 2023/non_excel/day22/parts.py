@@ -26,9 +26,9 @@ def overlap1d(s1, e1, s2, e2):
     """
     return s1 <= e2 and s2 <= e1
 
-
-class Cube:
+class Brick:
     def __init__(self, xa, ya, za, xb, yb, zb):
+        self.num = None
         self.xa = xa
         self.ya = ya
         self.za = za
@@ -62,46 +62,74 @@ class Cube:
                 # Got contact
                 self.contact_down.append(other)
                 other.contact_up.append(self)
+    
+    
+    def _calc_dep_fall(self, has_fallen):
+        # Will this fall if tag is removed?
+        if any(not has_fallen[brick.num] for brick in self.contact_down):
+            # If so, this will remain, and so the ones above
+            return 0
+        
+        # Tag this brick
+        has_fallen[self.num] = True
+
+        return 1 + sum(brick._calc_dep_fall(has_fallen) for brick in self.contact_up)
+
+    def calc_depends(self, has_fallen):
+        # This will fall
+        has_fallen[self.num] = True
+
+        # Count number of depdendents
+        # If two are on next level, first may not trigger level over that to
+        # fall, but then level above will trigger instead
+        return sum(brick._calc_dep_fall(has_fallen) for brick in self.contact_up)
 
 class Stack:
     def __init__(self):
-        self.cubes = []
+        self.bricks = []
 
-    def add_cube(self, cube):
-        self.cubes.append(cube)
+    def add_brick(self, brick):
+        brick.num = len(self.bricks)
+        self.bricks.append(brick)
     
-    def _dopack(self, cube_nr, packed_list, below_list):
+    def num_bricks(self):
+        return len(self.bricks)
+    
+    def _dopack(self, brick_nr, packed_list, below_list):
         # Aleady packed
-        if packed_list[cube_nr]:
+        if packed_list[brick_nr]:
             return
         
         # Pack all below first
-        for below_nr in below_list[cube_nr]:
+        for below_nr in below_list[brick_nr]:
             self._dopack(below_nr, packed_list, below_list)
         
-        # Pack this cube
-        self.cubes[cube_nr].pack([self.cubes[i] for i in below_list[cube_nr]])
-        packed_list[cube_nr] = True
+        # Pack this brick
+        self.bricks[brick_nr].pack([self.bricks[i] for i in below_list[brick_nr]])
+        packed_list[brick_nr] = True
 
     def pack(self):
-        top_cubes = [True] * len(self.cubes)
-        below = [[] for cube in self.cubes]
+        top_bricks = [True] * len(self.bricks)
+        below = [[] for brick in self.bricks]
 
-        # Find all blocks below every cube, and also find top cubes
-        for ia, ca in enumerate(self.cubes):
-            for ib, cb in enumerate(self.cubes):
+        # Find all blocks below every brick, and also find top bricks
+        for ia, ca in enumerate(self.bricks):
+            for ib, cb in enumerate(self.bricks):
                 if ia != ib:
                     if ca.above(cb):
-                        top_cubes[ib] = False
+                        top_bricks[ib] = False
                         below[ia].append(ib)
         
-        is_packed = [False] * len(self.cubes)
-        for i, is_top in enumerate(top_cubes):
+        is_packed = [False] * len(self.bricks)
+        for i, is_top in enumerate(top_bricks):
             if is_top:
                 self._dopack(i, is_packed, below)
         
-        for cube_nr, cube in enumerate(self.cubes):
-            cube.add_contacts([self.cubes[i] for i in below[cube_nr]])
+        for brick_nr, brick in enumerate(self.bricks):
+            brick.add_contacts([self.bricks[i] for i in below[brick_nr]])
+
+    def calc_depends(self, brick_nr):
+        return self.bricks[brick_nr].calc_depends([False] * len(self.bricks))
 
 
 class Input:
@@ -114,13 +142,13 @@ class Input:
         if type(f) == str:
             f = open(f,"r")
         
-        re_cube = re.compile(r"([0-9]+),([0-9]+),([0-9]+)~([0-9]+),([0-9]+),([0-9]+)")
+        re_brick = re.compile(r"([0-9]+),([0-9]+),([0-9]+)~([0-9]+),([0-9]+),([0-9]+)")
 
         self.stack = Stack()
         for l in f:
-            m = re_cube.fullmatch(l.strip())
+            m = re_brick.fullmatch(l.strip())
             if m:
-                self.stack.add_cube(Cube(*[int(crd) for crd in m.groups()]))
+                self.stack.add_brick(Brick(*[int(crd) for crd in m.groups()]))
         
 
 class Part1:
@@ -130,11 +158,11 @@ class Part1:
     def run(self):
         self.stack.pack()
 
-        # Nodes that can't be desintegrated is if any cube in contact_up has
+        # Nodes that can't be desintegrated is if any brick in contact_up has
         # only one contact_down
         num_disint = 0
-        for i, cube in enumerate(self.stack.cubes):
-            num_sup = sum(1 for c in cube.contact_up if len(c.contact_down) == 1)
+        for i, brick in enumerate(self.stack.bricks):
+            num_sup = sum(1 for c in brick.contact_up if len(c.contact_down) == 1)
             if num_sup == 0:
                 num_disint += 1
         return num_disint
@@ -145,8 +173,7 @@ class Part2:
 
     def run(self):
         self.stack.pack()
-
-        return None
+        return sum(self.stack.calc_depends(i) for i in range(self.stack.num_bricks()))
 
 if __name__ == "__main__":
     import doctest
